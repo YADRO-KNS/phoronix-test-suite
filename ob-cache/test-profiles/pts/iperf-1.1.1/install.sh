@@ -6,12 +6,12 @@ cd iperf-3.7/
 
 if [ "X$CFLAGS_OVERRIDE" = "X" ]
 then
-          CFLAGS="$CFLAGS -O3 -march=native"
+          CFLAGS="$CFLAGS -O3"
 else
           CFLAGS="$CFLAGS_OVERRIDE"
 fi
 
-./configure --prefix=$HOME/iperf-install CFLAGS="$CFLAGS"
+./configure --prefix=$HOME/iperf-install CFLAGS="$CFLAGS" --build=riscv64-unknown-linux-gnu
 make -j $NUM_CPU_CORES
 make install
 echo $? > ~/install-exit-status
