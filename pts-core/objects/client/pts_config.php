@@ -149,6 +149,7 @@ class pts_config
 		$config->addXmlNodeFromReader('PhoronixTestSuite/Options/BatchMode/PromptForTestIdentifier', $read_config);
 		$config->addXmlNodeFromReader('PhoronixTestSuite/Options/BatchMode/PromptForTestDescription', $read_config);
 		$config->addXmlNodeFromReader('PhoronixTestSuite/Options/BatchMode/PromptSaveName', $read_config);
+		$config->addXmlNodeFromReader('PhoronixTestSuite/Options/BatchMode/CompileWithOptimization', $read_config);
 		$config->addXmlNodeFromReader('PhoronixTestSuite/Options/BatchMode/RunAllTestCombinations', $read_config);
 		$config->addXmlNodeFromReader('PhoronixTestSuite/Options/BatchMode/Configured', $read_config);
 

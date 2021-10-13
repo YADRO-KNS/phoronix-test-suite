@@ -787,6 +787,35 @@ class pts_test_installer
 
 		return $compiler;
 	}
+
+	public static function configure_compile_flags(&$test_profile)
+	{
+		$compile_with_optimizations = pts_config::read_bool_config('PhoronixTestSuite/Options/BatchMode/CompileWithOptimization', 'FALSE');
+		$install_dir = $test_profile->get_install_dir();
+
+		if ($compile_with_optimizations)
+		{
+			pts_client::pts_set_environment_variable('CFLAGS', '-O3');
+			pts_client::pts_set_environment_variable('CXXFLAGS', '-O3');
+
+			if (!is_dir($install_dir))
+			{
+				mkdir($install_dir);
+			}
+
+			file_put_contents($install_dir . 'opt', 'The presence of this file means that this text is compiled with optimization flags');
+		}
+		else
+		{
+			if (is_file($install_dir . 'opt'))
+			{
+				unlink($install_dir . 'opt');
+			}
+		}
+
+		$test_profile->compile_with_optimizations = $compile_with_optimizations;
+	}
+
 	protected static function install_test_process(&$test_install_request, $no_prompts)
 	{
 		// Install a test
@@ -819,6 +848,7 @@ class pts_test_installer
 				self::test_install_error(null, $test_install_request, 'Downloading of needed test files failed.');
 				return false;
 			}
+
 
 			if($test_install_request->test_profile->get_file_installer() != false)
 			{

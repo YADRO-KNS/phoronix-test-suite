@@ -23,6 +23,8 @@
 class pts_test_profile extends pts_test_profile_parser
 {
 	public $test_installation = false;
+	protected $resources_dir = "";
+	public $compile_with_optimizations = false;
 	protected static $test_installation_cache;
 
 	public function __construct($identifier = null, $override_values = null, $normal_init = true)
@@ -466,6 +468,18 @@ class pts_test_profile extends pts_test_profile_parser
 	public function needs_updated_install()
 	{
 		// Checks if test needs updating
+		$f = $this->get_install_dir() . 'opt';
+
+		if (!$this->compile_with_optimizations && is_file($f))
+		{
+			return true;
+		}
+
+		if ($this->compile_with_optimizations && !is_file($f))
+		{
+			return true;
+		}
+
 		return $this->test_installation == false || $this->get_test_profile_version() != $this->test_installation->get_installed_version() || $this->get_installer_checksum() != $this->test_installation->get_installed_checksum() || $this->test_installation->get_system_hash() != phodevi::system_id_string();
 	}
 	public function to_json()

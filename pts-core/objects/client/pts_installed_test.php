@@ -82,6 +82,8 @@ class pts_installed_test
 			$this->system_hash = isset($xml->TestInstallation->Environment->SystemIdentifier) ? $xml->TestInstallation->Environment->SystemIdentifier->__toString() : null;
 			$this->associated_test_identifier = isset($xml->TestInstallation->Environment->Identifier) ? $xml->TestInstallation->Environment->Identifier->__toString() : null;
 		}
+
+		pts_test_installer::configure_compile_flags($test_profile);
 	}
 	public function save_test_install_metadata()
 	{

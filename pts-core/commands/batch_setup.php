@@ -48,6 +48,9 @@ class batch_setup implements pts_option_interface
 			$batch_options['PhoronixTestSuite/Options/BatchMode/PromptSaveName'] = 'FALSE';
 		}
 
+		$batch_options['PhoronixTestSuite/Options/BatchMode/CompileWithOptimization'] = pts_config::bool_to_string(
+			pts_user_io::prompt_bool_input('Would you like to compile tests with optimization flags?', false));
+
 		$batch_options['PhoronixTestSuite/Options/BatchMode/RunAllTestCombinations'] = pts_config::bool_to_string(pts_user_io::prompt_bool_input('Run all test options', true));
 		$batch_options['PhoronixTestSuite/Options/BatchMode/Configured'] = 'TRUE';
 

@@ -1214,7 +1214,8 @@ class pts_test_run_manager
 			'PromptForTestIdentifier' => pts_config::read_bool_config('PhoronixTestSuite/Options/BatchMode/PromptForTestIdentifier', 'TRUE'),
 			'Configured' => pts_config::read_bool_config('PhoronixTestSuite/Options/BatchMode/Configured', 'FALSE'),
 			'OpenBrowser' => pts_config::read_bool_config('PhoronixTestSuite/Options/BatchMode/OpenBrowser', 'FALSE'),
-			);
+			'CompileWithOptimization' => pts_config::read_bool_config('PhoronixTestSuite/Options/BatchMode/CompileWithOptimization', 'FALSE'),
+		);
 
 		if($custom_preset && is_array($custom_preset))
 		{
