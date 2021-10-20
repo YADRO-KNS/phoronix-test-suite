@@ -31,22 +31,34 @@ class pts_test_profile_parser
 	private $file_location = false;
 	public $no_fallbacks_on_null = false;
 	protected static $xml_file_cache;
+	private $threaded;
 
-	public function __construct($read = null, $normal_init = true)
+	public function __construct($read = null, $normal_init = true, $threaded = false)
 	{
 		$original_read = $read;
 		$this->overrides = array();
 		$this->tp_extends = null;
+		$this->threaded = $threaded;
 
 		if($normal_init == false || $read == null)
 		{
 			$this->identifier = $read;
-			return;
+			if (!$this->threaded)
+			{
+				return;
+			}
+
+			$read = preg_replace("{-threaded}", "", $this->identifier);
 		}
+
 		if(isset(self::$xml_file_cache[$read]))
 		{
 			// Found in cache so can avoid extra work below...
-			$this->identifier = $read;
+			if (!$this->threaded)
+			{
+				$this->identifier = $read;
+			}
+
 			$this->file_location = $read;
 			$this->xml = &self::$xml_file_cache[$this->file_location];
 		}
@@ -66,7 +78,7 @@ class pts_test_profile_parser
 			}
 		}
 
-		if(!isset($read[64]))
+		if(!isset($read[64]) && !$this->threaded)
 		{
 			// Passed is not an identifier since it's too long
 			$this->identifier = $read;
@@ -251,7 +263,13 @@ class pts_test_profile_parser
 	}
 	public function get_app_version()
 	{
-		return $this->xg('TestInformation/AppVersion');
+		$v = $this->xg('TestInformation/AppVersion');
+		if ($this->threaded && !strpos($v, " threaded"))
+		{
+			return $v . ' threaded';
+		}
+
+		return $v;
 	}
 	public function get_project_url()
 	{

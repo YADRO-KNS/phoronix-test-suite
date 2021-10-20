@@ -241,7 +241,14 @@ class pts_test_run_manager
 	}
 	protected function add_test_result_object(&$test_result)
 	{
-		$hash = $test_result->get_comparison_hash(true, false);
+		if (strpos($test_result->test_profile->get_identifier(), "-threaded"))
+		{
+			$hash = $test_result->get_comparison_hash(false, false);
+		}
+		else
+		{
+			$hash = $test_result->get_comparison_hash(true, false);
+		}
 
 		if(!isset($this->hashes_of_tests_to_run[$hash]))
 		{
@@ -1549,6 +1556,27 @@ class pts_test_run_manager
 		$unique_test_count = count(array_unique($to_run_objects));
 		$run_contains_a_no_result_type = false;
 		$request_results_save = false;
+
+		// Add threaded test if this test exists
+		$extended_threaded_tests = array();
+
+		foreach ($to_run_objects as &$run_object)
+		{
+			if ($run_object instanceof pts_test_profile)
+			{
+				if (is_dir(substr_replace($run_object->get_test_executable_dir(), "", -1) . '-threaded'))
+				{
+					$obj = new pts_test_profile($run_object->get_identifier() . '-threaded', null, false);
+					$obj->test_installation->set_compiler_data($run_object->test_installation->get_compiler_data());
+					$extended_threaded_tests[] = $obj;
+				}
+			}
+		}
+
+		foreach ($extended_threaded_tests as &$t)
+		{
+			$to_run_objects[] = $t;
+		}
 
 		foreach($to_run_objects as &$run_object)
 		{

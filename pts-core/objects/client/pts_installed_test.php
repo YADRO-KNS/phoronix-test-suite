@@ -284,6 +284,11 @@ class pts_installed_test
 		$this->system_hash = phodevi::system_id_string();
 		$this->install_date_time = date('Y-m-d H:i:s');
 	}
+
+	public function set_compiler_data($compiler_data)
+	{
+		$this->compiler_data = $compiler_data;
+	}
 }
 
 ?>

@@ -29,14 +29,24 @@ class pts_test_profile extends pts_test_profile_parser
 
 	public function __construct($identifier = null, $override_values = null, $normal_init = true)
 	{
-		parent::__construct($identifier, $normal_init);
+		$is_threaded = strpos($identifier, "-threaded") !== false;
+		parent::__construct($identifier, $normal_init, $is_threaded);
 
 		if($override_values != null && is_array($override_values))
 		{
 			$this->set_override_values($override_values);
 		}
 
-		if($normal_init && PTS_IS_CLIENT && $this->identifier != null)
+		if ($this->identifier != NULL)
+		{
+			$this->resources_dir = PTS_TEST_PROFILE_PATH . $this->identifier . '/';
+			if ($is_threaded)
+			{
+				$this->resources_dir = PTS_TEST_PROFILE_PATH . preg_replace("{-threaded}", "", $this->identifier) . '/';
+			}
+		}
+
+		if (($normal_init && PTS_IS_CLIENT && $this->identifier != null) || $is_threaded)
 		{
 			if(!isset(self::$test_installation_cache[$identifier]))
 			{
@@ -62,7 +72,7 @@ class pts_test_profile extends pts_test_profile_parser
 	}
 	public function get_resource_dir()
 	{
-		return PTS_TEST_PROFILE_PATH . $this->identifier . '/';
+		return $this->resources_dir;
 	}
 	public function get_override_values($as_string = false)
 	{
