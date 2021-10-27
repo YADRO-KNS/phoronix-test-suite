@@ -59,6 +59,7 @@ class phodevi_system extends phodevi_device_interface
 			'security-features' => new phodevi_device_property('sw_security_features', phodevi::std_caching),
 			'kernel-extra-details' => new phodevi_device_property('sw_kernel_extra_details', phodevi::std_caching),
 			'battery' => new phodevi_device_property('battery', phodevi::smart_caching),
+			'scaling-governor' => new phodevi_device_property('scaling-governor', phodevi::std_caching),
 			);
 	}
 	public static function sw_username()

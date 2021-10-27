@@ -41,6 +41,7 @@ class phodevi_base
 	{
 		return array(
 		'OS' => array('system', 'operating-system'),
+		'Scaling Governor' => array('cpu', 'scaling-governor'),
 		'Kernel' => array('system', 'kernel-string'),
 		'Desktop' => array('system', 'desktop-environment'),
 		'Display Server' => array('system', 'display-server'),
