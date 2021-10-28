@@ -28,6 +28,9 @@ else
 	INSTALL_PREFIX="$1"
 fi
 
+WRAPPERS_DIR="$PWD/wrappers"
+CC=gcc
+
 # Ensure the user is in the correct directory
 if [ ! -f pts-core/phoronix-test-suite.php ]
 then
@@ -113,6 +116,21 @@ else
 	cp pts-core/static/images/openbenchmarking.png $DESTDIR$INSTALL_PREFIX/share/icons/hicolor/64x64/mimetypes/application-x-openbenchmarking.png
 
 fi
+
+OLD_DIR=$PWD
+cd $WRAPPERS_DIR
+
+$CC change_scaling_governor.c -o change_scaling_governor
+chown root change_scaling_governor
+chmod u=rwx,go=xr,+s change_scaling_governor
+mv change_scaling_governor $INSTALL_PREFIX/share/phoronix-test-suite
+
+$CC get_clk_summary.c -o get_clk_summary
+chown root get_clk_summary
+chmod u=rwx,go=xr,+s get_clk_summary
+mv get_clk_summary $INSTALL_PREFIX/share/phoronix-test-suite
+
+cd $OLD_DIR
 
 echo -e "\nPhoronix Test Suite Installation Completed\n
 Executable File: $INSTALL_PREFIX/bin/phoronix-test-suite

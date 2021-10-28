@@ -905,8 +905,29 @@ class pts_test_run_manager
 			return false;
 		}
 
+		$this->pre_conf_system_check();
 		return true;
 	}
+
+	public function pre_conf_system_check()
+	{
+		$cpu_scaling_governor = phodevi::read_property('cpu', 'scaling-governor');
+		if (phodevi::is_linux() && stripos($cpu_scaling_governor, 'performance') === false)
+		{
+			$change_scaling_governor = pts_user_io::prompt_bool_input(
+				'You are running benchmarks in scaling governor \'' . $cpu_scaling_governor . '\' mode. Don\'t want to switch to \'performance\' mode?', true);
+
+			if ($change_scaling_governor)
+			{
+				$cpu_cnt = phodevi_linux_parser::read_cpuinfo('processor');
+				for ($i = 0; $i < count($cpu_cnt); $i++)
+				{
+					shell_exec('/usr/share/phoronix-test-suite/change_scaling_governor performance ' . $i);
+				}
+			}
+		}
+	}
+
 	public function pre_execution_process()
 	{
 		if($this->is_new_result_file || $this->result_already_contains_identifier() == false)
@@ -1065,6 +1086,11 @@ class pts_test_run_manager
 		if($show_all || phodevi::read_property('system', 'kernel-extra-details'))
 		{
 			$notes['kernel-extra-details'] = phodevi::read_property('system', 'kernel-extra-details');
+		}
+
+		if ($show_all || phodevi::read_property('system', 'clk-summary'))
+		{
+			$notes['clk-summary'] = phodevi::read_property('system', 'clk-summary');
 		}
 
 		if($show_all || phodevi::read_property('system', 'environment-variables', false))

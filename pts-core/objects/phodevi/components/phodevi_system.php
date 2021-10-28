@@ -60,6 +60,7 @@ class phodevi_system extends phodevi_device_interface
 			'kernel-extra-details' => new phodevi_device_property('sw_kernel_extra_details', phodevi::std_caching),
 			'battery' => new phodevi_device_property('battery', phodevi::smart_caching),
 			'scaling-governor' => new phodevi_device_property('scaling-governor', phodevi::std_caching),
+			'clk-summary' => new phodevi_device_property('clk_summary', phodevi::std_caching),
 			);
 	}
 	public static function sw_username()
@@ -2145,6 +2146,14 @@ class phodevi_system extends phodevi_device_interface
 		}
 
 		return implode(' + ', $batteries);
+	}
+	public static function clk_summary()
+	{
+		if (phodevi::is_linux())
+		{
+			$output = shell_exec('/usr/share/phoronix-test-suite/get_clk_summary');
+			return 'clk_summary: ' . $output;
+		}
 	}
 }
 
