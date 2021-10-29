@@ -72,6 +72,12 @@ class start_phoromatic_server implements pts_option_interface
 		$errno = null;
 		$errstr = null;
 
+		$address = '172.17.27.184';
+		if (!pts_user_io::prompt_bool_input('Start phoromatic server at ' . $address . '?', true))
+		{
+			$address = pts_user_io::prompt_user_input('Enter the phoromatic server address');
+		}
+
 		if($remote_access == 'RANDOM')
 		{
 			do
@@ -81,7 +87,7 @@ class start_phoromatic_server implements pts_option_interface
 
 				$remote_access = rand(8000, 8999);
 			}
-			while(($fp = fsockopen('127.0.0.1', $remote_access, $errno, $errstr, 5)) != false);
+			while(($fp = fsockopen($address, $remote_access, $errno, $errstr, 5)) != false);
 			echo 'Port ' . $remote_access . ' chosen as random port for this instance. Change the default port via the Phoronix Test Suite user configuration file.' . PHP_EOL;
 		}
 
@@ -93,7 +99,7 @@ class start_phoromatic_server implements pts_option_interface
 			// ALLOWING SERVER TO BE REMOTELY ACCESSIBLE
 			$server_ip = '0.0.0.0';
 
-			if(($fp = fsockopen('127.0.0.1', $remote_access, $errno, $errstr, 5)) != false)
+			if(($fp = fsockopen($address, $remote_access, $errno, $errstr, 5)) != false)
 			{
 				fclose($fp);
 				trigger_error('Port ' . $remote_access . ' is already in use by another server process. Close that process or change the Phoronix Test Suite server port via' . pts_config::get_config_file_location() . ' to proceed.', E_USER_ERROR);
@@ -112,7 +118,7 @@ class start_phoromatic_server implements pts_option_interface
 					$web_socket_port = pts_config::read_user_config('PhoronixTestSuite/Options/Server/WebSocketPort', '');
 				}
 
-				while($web_socket_port == null || !is_numeric($web_socket_port) || (($fp = fsockopen('127.0.0.1', $web_socket_port, $errno, $errstr, 5)) != false))
+				while($web_socket_port == null || !is_numeric($web_socket_port) || (($fp = fsockopen($address, $web_socket_port, $errno, $errstr, 5)) != false))
 				{
 					if($fp)
 						fclose($fp);
@@ -207,7 +213,7 @@ class start_phoromatic_server implements pts_option_interface
 				     include        /etc/nginx/fastcgi_params;
 				     fastcgi_param  SCRIPT_FILENAME  $document_root/$fastcgi_script_name;
 				     fastcgi_split_path_info ^(.+\.php)(/.+)$;
-				     fastcgi_pass   127.0.0.1:9000;
+				     fastcgi_pass   ' . $address . ':9000;
 				     fastcgi_index  index.php;
 				}
 			  }
@@ -238,8 +244,8 @@ class start_phoromatic_server implements pts_option_interface
 		}
 		$server_launcher .= 'http_server_pid=$!'. PHP_EOL;
 		$server_launcher .= 'sleep 1' . PHP_EOL;
-		$server_launcher .= 'echo "The Phoromatic Web Interface Is Accessible At: http://localhost:' . $web_port . '"' . PHP_EOL;
-		$pts_logger->log('Starting HTTP process @ http://localhost:' . $web_port);
+		$server_launcher .= 'echo "The Phoromatic Web Interface Is Accessible At: http://' . $address . ':' . $web_port . '"' . PHP_EOL;
+		$pts_logger->log('Starting HTTP process @ http://' . $address . ' :' . $web_port);
 
 		// Avahi for zeroconf network discovery support
 		if(pts_config::read_user_config('PhoronixTestSuite/Options/Server/AdvertiseServiceZeroConf', 'TRUE'))
